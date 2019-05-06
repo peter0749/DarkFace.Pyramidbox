@@ -183,14 +183,13 @@ def detect(net, img_path):
     dets = bbox_vote(det)
 
     with open(args.save_pred + '/' + os.path.splitext(os.path.split(img_path)[-1])[0] + '.txt', 'w') as fp:
-        if args.save_format=='darkface':
-            fp.write('{:d}\n'.format(len(dets)))
+        #if args.save_format=='darkface':
+        #    fp.write('{:d}\n'.format(len(dets)))
         for bbox in dets:
             score = float(bbox[-1])
             xmin,ymin,xmax,ymax = map(lambda x: int(np.round(x)), bbox[:-1])
             xmin,xmax = (xmin,xmax) if xmin<xmax else (xmax,xmin)
             ymin,ymax = (ymin,ymax) if ymin<ymax else (ymax,ymin)
-            xmin,ymin = max(0,xmin), max(0,ymin)
             if args.save_format=='map':
                 fp.write('face {:.6f} {:d} {:d} {:d} {:d}\n'.format(score,xmin,ymin,xmax,ymax))
             else:

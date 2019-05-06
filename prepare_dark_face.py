@@ -27,6 +27,6 @@ def darkface_mklist(img_root, label_root, train=4500, val=500, test=1000):
                     fp.write(" {:d} {:d} {:d} {:d} 1".format(x,y,w,h))
                 fp.write("\n")
 if __name__ == '__main__':
-    root = "/home/peter/NTU-MiRA/FR/DarkFace_Train"
+    root = ""
     darkface_mklist(root+"/images", root+"/label", train=4500, val=500, test=1000)
 

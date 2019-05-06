@@ -35,9 +35,9 @@ _C.anchor_sampling = True
 _C.filter_min_face = True
 
 # train config
-_C.LR_STEPS = (80000,100000,120000)
-_C.MAX_STEPS = 150000
-_C.EPOCHES = 100
+_C.LR_STEPS = (80000,100000,120000,150000)
+_C.MAX_STEPS = 1000000
+_C.EPOCHES = 300
 
 # anchor config
 _C.FEATURE_MAPS = [160, 80, 40, 20, 10, 5]
@@ -61,7 +61,7 @@ _C.CONF_THRESH = 0.05
 
 
 # dataset config
-_C.HOME = '/home/peter/dd'
+_C.HOME = ''
 
 # face config
 _C.FACE = EasyDict()

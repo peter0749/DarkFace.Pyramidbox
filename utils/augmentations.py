@@ -10,6 +10,28 @@ import math
 import six
 from data.config import cfg
 import random
+import albumentations as albu
+
+imgaug = albu.Compose([
+    albu.OneOf([
+        albu.RandomBrightnessContrast(0.2, 0.2, p=0.5),
+        albu.RandomGamma((78, 130),p=0.5),
+        albu.CLAHE(4.0, (32,32), p=0.1) # we have big images
+    ]),
+    albu.JpegCompression(80,100,p=0.1),
+    albu.Blur(5,p=0.2),
+    albu.GaussNoise((5,10),p=0.2),
+    albu.OneOf([
+        albu.HueSaturationValue(hue_shift_limit=10, sat_shift_limit=10, val_shift_limit=30, p=1),
+        albu.RGBShift(20,10,20,p=1),
+    ], p=0.5)
+], p=0.5)
+spaaug = albu.Compose([
+    albu.Rotate(15, interpolation=cv2.INTER_LINEAR, border_mode=cv2.BORDER_CONSTANT, p=1.0, always_apply=True) #,
+    #albu.IAAPerspective(scale=(0.01,0.05), keep_size=True, p=0.3),
+    #albu.IAAPiecewiseAffine(scale=(0.01,0.05), p=0.1)
+    ],
+bbox_params={'format': 'pascal_voc', 'min_area': 2, 'label_fields': ['category_id']}, p=0.5)
 
 class sampler():
 
@@ -72,6 +94,9 @@ class bbox():
         self.ymin = ymin
         self.xmax = xmax
         self.ymax = ymax
+
+def distort_image(img):
+    return imgaug(image=img)['image']
 
 def meet_emit_constraint(src_bbox, sample_bbox):
     center_x = (src_bbox.xmax + src_bbox.xmin) / 2
@@ -710,6 +735,8 @@ def preprocess(img, bbox_labels, mode, image_path):
     #img = np.array(img, dtype=np.uint8)
     img_height, img_width = img.shape[:2]
     if mode == 'train':
+        if cfg.apply_distort:
+            img = distort_image(img)
         if cfg.apply_expand:
             img = Image.fromarray(img)
             img, bbox_labels, img_width, img_height = expand_image(

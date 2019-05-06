@@ -6,9 +6,9 @@ import torch.utils.data as data
 import numpy as np
 import random
 from data.config import cfg
-from utils.augmentations import preprocess
+from utils.augmentations import preprocess, spaaug
 import matplotlib.pyplot as plt
-from data.aug import Aug
+
 
 class WIDERDetection(data.Dataset):
     """docstring for WIDERDetection"""
@@ -18,8 +18,6 @@ class WIDERDetection(data.Dataset):
         self.mode = mode
         self.fnames = []
         self.boxes = []
-        if self.mode=='train' and cfg.apply_distort:
-            self.augmentation = Aug()
 
         with open(list_file) as f:
             lines = f.readlines()
@@ -55,7 +53,8 @@ class WIDERDetection(data.Dataset):
             img = np.asarray(cv2.imread(image_path, cv2.IMREAD_COLOR), dtype=np.uint8)[...,::-1] # BGR -> RGB
             boxes = np.array(self.boxes[index], dtype=np.int32)
             if self.mode=='train' and cfg.apply_distort:
-                img, boxes = self.augmentation.ultimate_aug(img, boxes)
+                auged_d = spaaug(image=img, bboxes=boxes, category_id=[0]*len(boxes))
+                img, boxes = auged_d['image'], np.asarray(auged_d['bboxes'], dtype=np.float32)
             im_height, im_width = img.shape[:2]
             if len(boxes)>0: # if has bounding boxes
                 boxes = np.round(np.asarray(boxes, dtype=np.float32)).astype(np.int32)
