@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-
+from .focal_loss import focal_loss
 from ..bbox_utils import match, log_sum_exp, match_ssd
 
 class MultiBoxLoss(nn.Module):
