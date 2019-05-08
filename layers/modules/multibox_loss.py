@@ -12,8 +12,6 @@ from torch.autograd import Variable
 
 
 from ..bbox_utils import match, log_sum_exp, match_ssd
-from focal_loss import focal_loss
-
 
 class MultiBoxLoss(nn.Module):
     """SSD Weighted Loss Function
