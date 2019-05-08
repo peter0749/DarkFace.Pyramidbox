@@ -12,6 +12,7 @@ from torch.autograd import Variable
 
 
 from ..bbox_utils import match, log_sum_exp, match_ssd
+from focal_loss import focal_loss
 
 
 class MultiBoxLoss(nn.Module):
@@ -120,7 +121,8 @@ class MultiBoxLoss(nn.Module):
         conf_p = conf_data[(pos_idx + neg_idx).gt(0)
                            ].view(-1, self.num_classes)
         targets_weighted = conf_t[(pos + neg).gt(0)]
-        loss_c = F.cross_entropy(conf_p, targets_weighted, size_average=False)
+        # loss_c = F.cross_entropy(conf_p, targets_weighted, size_average=False)
+        loss_c = focal_loss(conf_p, targets_weighted, int(conf_p.size(1)))
 
         # Sum of losses: L(x,c,l,g) = (Lconf(x, c) + αLloc(x,l,g)) / N
         N = num_pos.data.sum() if num_pos.data.sum() > 0 else num
