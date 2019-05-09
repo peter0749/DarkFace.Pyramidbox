@@ -195,6 +195,7 @@ def train():
         logger.add_scalar('data/face_loss', face_loss, epoch)
         logger.add_scalar('data/head_loss', head_loss, epoch)
         val(epoch, net, pyramidbox, criterion1, criterion2)
+        torch.cuda.empty_cache()
 
 
 def val(epoch,
